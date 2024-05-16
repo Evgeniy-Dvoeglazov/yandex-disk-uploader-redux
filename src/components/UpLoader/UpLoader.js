@@ -1,14 +1,16 @@
 import './UpLoader.css';
 import { useDropzone } from 'react-dropzone';
 import preloader from '../../images/preloader.gif'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { CircularProgressbar } from "react-circular-progressbar";
 import {
   ADD_FILES,
   REMOVE_All_FILES,
   REMOVE_FILE,
   IS_MAX_FILES
 } from '../../utils/constants';
+import "react-circular-progressbar/dist/styles.css";
 
 function UpLoader(props) {
 
@@ -20,6 +22,7 @@ function UpLoader(props) {
   const isUploadSuccess = useSelector(state => state.uploadSuccess.isUploadSuccess);
   const isServerError = useSelector(state => state.serverError.isServerError);
   const isAuthError = useSelector(state => state.authError.isAuthError);
+  const [progress, setProgress] = useState();
 
   const {
     acceptedFiles,
@@ -30,6 +33,12 @@ function UpLoader(props) {
   } = useDropzone();
 
   const maxFiles = 100;
+  const config = {
+    onUploadProgress: (progressEvent) =>
+      setProgress(
+        parseInt(Math.round((progressEvent.loaded / progressEvent.total) * 100))
+      ),
+  };
 
   const files = selectedFiles.map(file => {
 
@@ -42,6 +51,13 @@ function UpLoader(props) {
         <div className='uploader__file-info'>
           <p className='uploader__file-name'>{file.path}</p>
           <p className='uploader__file-size'>{(file.size / 1000000).toFixed(3)} Мб</p>
+        </div>
+        <div className="dropzone-progressbar">
+          <CircularProgressbar
+            value={progress ? progress : 0}
+            strokeWidth="15"
+            styles={progress == 100 && { path: { stroke: "#77b300" } }}
+          />
         </div>
         <button className={`uploader__delete-btn ${isLoading ? 'uploader__delete-btn_invisible' : ''}`} type='button' aria-label='delete-btn' onClick={handleDeleteFile}></button>
       </li>
@@ -97,7 +113,7 @@ function UpLoader(props) {
     selectedFiles.map((file) => {
       data.append('files', file);
     });
-    props.upload(data);
+    props.upload(data, config);
   }
 
   function deleteFile(file) {

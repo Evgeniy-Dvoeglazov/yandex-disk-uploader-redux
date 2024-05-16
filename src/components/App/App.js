@@ -76,7 +76,7 @@ function App() {
     })
   }
 
-  function upload(data) {
+  function upload(data, config) {
 
     setIsLoadingAction(true);
     if (!isAuth) {
@@ -86,7 +86,7 @@ function App() {
           response_type: 'token',
           redirect_uri: 'https://yandex-disk-uploader.vercel.app/empty-page'
         },
-        'https://yandex-disk-uploader.vercel.app'
+        'https://yandex-disk-uploader.vercel.app', config
       )
         .then(({
           handler
