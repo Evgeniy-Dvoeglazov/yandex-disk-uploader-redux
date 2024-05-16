@@ -23,6 +23,7 @@ function UpLoader(props) {
   const isServerError = useSelector(state => state.serverError.isServerError);
   const isAuthError = useSelector(state => state.authError.isAuthError);
   const [progress, setProgress] = useState();
+  console.log( progress)
 
   const {
     acceptedFiles,
@@ -56,7 +57,7 @@ function UpLoader(props) {
           <CircularProgressbar
             value={progress ? progress : 0}
             strokeWidth="15"
-            styles={progress == 100 && { path: { stroke: "#77b300" } }}
+            styles={progress == 0 && { path: { stroke: "#77b300" } }}
           />
         </div>
         <button className={`uploader__delete-btn ${isLoading ? 'uploader__delete-btn_invisible' : ''}`} type='button' aria-label='delete-btn' onClick={handleDeleteFile}></button>
